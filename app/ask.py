@@ -53,13 +53,13 @@ def ask(chat, question: str) -> None:
 
 
 def run_conversation(client, chat, first_question: str) -> None:
-    """質問ごとに新しいchatを使い、会話履歴を引き継がず質問する。"""
+    """同じchatを使い、会話履歴を引き継いで質問する。"""
     question = first_question
 
     while True:
         print(f"[質問] {question}\n")
 
-        # 同じchatを毎回渡すため、会話履歴が維持される
+        # 同じchatを使うため、会話履歴が維持される
         ask(chat, question)
 
         try:
@@ -72,8 +72,6 @@ def run_conversation(client, chat, first_question: str) -> None:
 
         if not question:
             break
-
-        chat = client.chats.create(model=MODEL)
 
 
 def main() -> None:
