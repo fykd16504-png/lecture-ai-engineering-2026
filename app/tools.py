@@ -77,3 +77,81 @@ def get_lecture_summary(lecture: int) -> str:
         available = sorted(p.stem for p in (DATA_DIR / "lectures").glob("*.md"))
         return f"第{lecture}回の要点はまだありません。用意されている回: {', '.join(available)}"
     return path.read_text(encoding="utf-8")
+
+
+
+import json
+import random
+
+#ざっくりの流れ講義番号を読み込む　用語集を読み込む関数を利用をして全ての用語を読み込む
+#その中で該当講義の用語のみのリストを作成　その中から1つ選んで問題と答えを作る
+#入力講義番号　出力クイズの辞書のjson
+def make_quiz(lecture: int) -> str:
+    """指定された講義回の用語から、復習用の問題を1問作る。
+
+    復習問題を求められたときに使用する。
+    """
+
+    # 用語集全体を読み込む
+    glossary = load_glossary()
+
+    # 指定講義の用語を入れるリスト
+    terms = []
+
+    # 用語を1件ずつ調べる
+    for item in glossary:
+        if item["lecture"] == lecture:
+            terms.append(item)
+
+    # 該当する用語がない場合
+    if len(terms) == 0:
+        return json.dumps(
+            {
+                "error": f"講義{lecture}の用語が見つかりません"
+            },
+            ensure_ascii=False,
+        )
+
+    # termsの中から1つ選ぶ
+    selected = random.choice(terms)
+
+    # 問題と答えを作る
+    result = {
+        "question": f"{selected['term']}の意味は？",
+        "answer": selected["definition"],
+    }
+
+    # 辞書をJSON文字列にして返す
+    return json.dumps(result, ensure_ascii=False)
+
+from datetime import datetime
+from pathlib import Path
+
+
+def save_learning_log(topic: str, reflection: str) -> str:
+    """学習記録をlearning_logフォルダに保存する。"""
+
+    # learning_logフォルダを作成する
+    log_dir = Path("learning_log")
+    log_dir.mkdir(parents=True, exist_ok=True)
+
+    # 現在時刻からファイル名を作る
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    file_path = log_dir / f"{timestamp}.md"
+
+    # ファイルに保存する内容
+    content = f"""# 学習記録
+
+## トピック
+
+{topic}
+
+## 振り返り
+
+{reflection}
+"""
+
+    # ファイルに書き込む
+    file_path.write_text(content, encoding="utf-8")
+
+    return f"学習記録を保存しました: {file_path}"
