@@ -8,8 +8,8 @@
     uv run python -m app.judge --generate --cases data/eval/my_cases.jsonl
                                                 # 宿題（実装）: 回答を自分のエージェント（app.agent）で生成し直す
 
-採点の基準は data/eval/rubric.md に書いてある。基準ごとに理由を先に書かせてから、
-pass / fail / unsure のどれかを返させる（構造化出力）。unsure は自動判定から外し、人が見る「要確認」に回す。
+採点の基準は data/eval/rubric.md に書いてある。基準ごとに pass / fail / unsure の判定を先に出し、
+そのあとに理由を書かせる（構造化出力）。unsure は自動判定から外し、人が見る「要確認」に回す。
 「第N回」が末尾にあるかは、LLM に聞かずにコードで判定する。
 """
 
